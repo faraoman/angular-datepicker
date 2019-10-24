@@ -240,7 +240,19 @@ Module.directive('dateTime', ['$compile', '$document', '$filter', 'dateTimeConfi
           container.append(picker);
           //          this approach doesn't work
           //          element.before(picker);
-          picker.css({top: element[0].offsetHeight + 'px', display: 'block'});
+          { // new implementation
+            var posInput = element[0].getBoundingClientRect();
+            var posPicker = picker[0].getBoundingClientRect();
+            if ((posInput.bottom + posPicker.height) > window.innerHeight) {
+              picker.css({top: (-posPicker.height) + 'px', display: 'block'});
+            } else {
+              picker.css({top: element[0].offsetHeight + 'px', display: 'block'});
+            }
+            if (posPicker.right > window.innerWidth) {
+              var diff = window.innerWidth - posPicker.right;
+              picker.css({left: diff + 'px'});
+            }
+          }
         }
         picker.bind('mousedown', function (evt) {
           evt.preventDefault();
